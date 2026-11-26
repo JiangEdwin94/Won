@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Won → RM">
+<meta name="theme-color" content="#0f2a5c">
+<title>Won to Ringgit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+/* VOICE: quick, calm travel tool for a market stall moment
+   IDEA: a pocket calculator with won notes as shortcuts
+   PICTURE: the giant RM result over a deep taegeuk-blue field
+   COLOUR and TYPE: navy #0f2a5c, taegeuk red #cd2e3a accent, white; Gothic A1
+   LAYOUT: result on top, chips, keypad at thumb height, rate settings below */
+:root{color-scheme:light dark;--bg:light-dark(#f4f6fb,#070d1c);--ink:light-dark(#0c1630,#eef2fb);--card:light-dark(#fff,#111a30);--line:light-dark(#dfe4ef,#22304f);--navy:#0f2a5c;--red:#cd2e3a;--mute:light-dark(#5b6782,#9aa7c4)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Gothic A1",system-ui,sans-serif;overflow-x:clip}
+.wrap{max-width:460px;margin:0 auto;padding:0 0 calc(24px + env(safe-area-inset-bottom))}
+.screen{background:var(--navy);color:#fff;padding:calc(20px + env(safe-area-inset-top)) 22px 22px;border-radius:0 0 28px 28px;position:relative;overflow:hidden}
+.screen::after{content:"";position:absolute;right:-60px;top:-60px;width:190px;height:190px;border-radius:50%;background:conic-gradient(from 90deg,var(--red) 0 50%,#2f5fd0 50% 100%);opacity:.22}
+.top{display:flex;justify-content:space-between;align-items:center;font-size:14px;color:#b9c6e6;position:relative;z-index:1}
+.swap{background:rgba(255,255,255,.12);border:0;color:#fff;font:inherit;font-weight:700;padding:10px 14px;border-radius:999px;min-height:44px;cursor:pointer}
+.swap:focus-visible,.k:focus-visible,.chip:focus-visible,input:focus-visible{outline:3px solid #ffd84a;outline-offset:2px}
+.in{margin-top:14px;font-size:clamp(22px,7vw,30px);font-weight:700;overflow-wrap:anywhere;line-height:1.25;position:relative;z-index:1}
+.in small,.out small{font-size:.55em;color:#b9c6e6;margin-right:6px;font-weight:500}
+.out{font-size:clamp(44px,15vw,64px);font-weight:800;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:relative;z-index:1}
+.out small{color:#ff8a92}
+.hint{font-size:13px;color:#b9c6e6;margin-top:6px;position:relative;z-index:1}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:16px 16px 4px;scrollbar-width:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:15px;font-weight:700;padding:10px 14px;border-radius:12px;min-height:44px;cursor:pointer}
+.pad{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:12px 16px}
+.k.wide{grid-column:span 2;height:56px;font-size:20px}
+.k.eq{background:var(--red);color:#fff;font-size:26px}
+.total{font-size:18px;font-weight:700;color:#ffd84a;min-height:1.4em;position:relative;z-index:1}
+.k{border:0;background:var(--card);color:var(--ink);font:inherit;font-size:26px;font-weight:700;height:64px;border-radius:16px;box-shadow:0 1px 0 var(--line);cursor:pointer;transition:transform .08s}
+.k:active{transform:scale(.95)}
+.k.op{background:transparent;color:var(--red);font-size:20px;box-shadow:inset 0 0 0 1px var(--line)}
+.rate{margin:6px 16px 0;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.rate label{display:block;font-size:14px;color:var(--mute);margin-bottom:6px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.row span{white-space:nowrap;font-weight:700}
+input{font:inherit;font-size:18px;font-weight:700;width:7.5em;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);min-height:44px}
+.lock{display:flex!important;gap:10px;align-items:center;margin:12px 0 0!important;color:var(--ink)!important;font-weight:700;min-height:44px;cursor:pointer}
+.lock input{width:22px;height:22px;min-height:0;accent-color:var(--red)}
+.note{font-size:13px;color:var(--mute);margin:10px 0 0}
+.tbl{margin:14px 16px 0;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:6px 16px}
+.tbl div{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line);font-size:15px}
+.tbl div:last-child{border:0}
+.tbl b{white-space:nowrap}
+h2{font-size:14px;color:var(--mute);font-weight:500;margin:18px 20px 0}
+@media(prefers-reduced-motion:reduce){.k{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="screen">
+    <div class="top"><span id="dir">Korean won → Ringgit</span><button class="swap" id="swap" aria-label="Swap direction">⇅ Swap</button></div>
+    <div class="in" id="inRow"><small id="inCur">₩</small><span id="inVal">0</span></div>
+    <div class="out" id="outRow"><small id="outCur">RM</small><span id="outVal">0.00</span></div>
+    <div class="total" id="total"></div>
+    <div class="hint" id="hint"></div>
+  </section>
+
+  <div class="chips" id="chips"></div>
+
+  <div class="pad" id="pad"></div>
+
+  <div class="rate">
+    <label for="rate">Rate (mid-market, same as Wise)</label>
+    <div class="row"><span>RM 1 =</span><input id="rate" type="number" inputmode="decimal" step="0.1" min="1"><span>won</span><button class="chip" id="refresh" type="button">↻ Update</button></div>
+    <p class="note" id="status">Checking live rate…</p>
+    <label class="lock"><input type="checkbox" id="lock"> Lock this rate (I already exchanged in Wise)</label>
+    <label for="fee" style="margin-top:12px">Wise fee % (optional, 0 if you already hold KRW in Wise)</label>
+    <div class="row"><input id="fee" type="number" inputmode="decimal" step="0.01" min="0" value="0"><span>%</span></div>
+  </div>
+
+  <h2>Quick guide at your rate</h2>
+  <div class="tbl" id="tbl"></div>
+</div>
+<script>
+{
+const DEF=361;
+let rate=DEF,s='',toRM=true,fee=0,when='',locked=false;
+try{const r=parseFloat(localStorage.getItem('krwRate'));if(r>0)rate=r;when=localStorage.getItem('krwWhen')||'';fee=parseFloat(localStorage.getItem('krwFee'))||0;locked=localStorage.getItem('krwLock')==='1'}catch(e){}
+const eff=()=>rate/(1+fee/100);
+const $=id=>document.getElementById(id);
+const fmtW=n=>Math.round(n).toLocaleString('en-US');
+const fmtR=n=>n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const OPS={'+':'+','−':'-','×':'*','÷':'/'};
+const isOp=c=>c in OPS;
+function tokens(){return s.match(/[0-9.]+|[+−×÷]/g)||[]}
+function evalExpr(){
+  let t=tokens();while(t.length&&isOp(t[t.length-1]))t.pop();
+  if(!t.length)return 0;
+  const st=[parseFloat(t[0])||0];
+  for(let i=1;i<t.length;i+=2){
+    const op=t[i],v=parseFloat(t[i+1])||0;
+    if(op==='×')st.push(st.pop()*v);
+    else if(op==='÷')st.push(v?st.pop()/v:0);
+    else st.push(op==='−'?-v:v);
+  }
+  return st.reduce((a,b)=>a+b,0);
+}
+const fmtTok=x=>{if(isOp(x))return ' '+x+' ';const [a,b]=x.split('.');return Number(a||0).toLocaleString('en-US')+(b!==undefined?'.'+b:'')};
+function render(){
+  const n=evalExpr(),hasOp=/[+−×÷]/.test(s);
+  $('inCur').textContent=toRM?'₩':'RM';
+  $('outCur').textContent=toRM?'RM':'₩';
+  $('dir').textContent=toRM?'Korean won → Ringgit':'Ringgit → Korean won';
+  $('inVal').textContent=s?tokens().map(fmtTok).join(''):'0';
+  $('total').textContent=hasOp?'= '+(toRM?'₩'+fmtW(n):'RM '+fmtR(n)):'';
+  $('outVal').textContent=toRM?fmtR(n/eff()):fmtW(n*eff());
+  $('hint').textContent='RM 1 = ₩'+rate.toLocaleString('en-US')+(fee?' (−'+fee+'% fee)':'')+'  ·  ₩10,000 ≈ RM '+fmtR(10000/eff());
+  const chips=toRM?[1000,5000,10000,50000]:[10,50,100,500];
+  $('chips').innerHTML=chips.map(c=>`<button class="chip" data-c="${c}">+ ${toRM?'₩'+fmtW(c):'RM '+c}</button>`).join('');
+  const rows=[1000,5000,10000,20000,50000,100000];
+  $('tbl').innerHTML=rows.map(w=>`<div><span>₩${fmtW(w)}</span><b>RM ${fmtR(w/eff())}</b></div>`).join('');
+}
+function buildPad(){
+  const x=toRM?'000':'.';
+  const list=['7','8','9','÷','4','5','6','×','1','2','3','−',x,'0','⌫','+'];
+  $('pad').innerHTML=list.map(k=>`<button class="k${isOp(k)||k==='⌫'?' op':''}" data-k="${k}" aria-label="${k==='⌫'?'Delete':k}">${k}</button>`).join('')+
+  `<button class="k op wide" data-k="C">Clear</button><button class="k eq wide" data-k="=">=</button>`;
+}
+function press(k){
+  const last=s.slice(-1),cur=(s.match(/[0-9.]+$/)||[''])[0];
+  if(k==='C')s='';
+  else if(k==='⌫')s=s.slice(0,-1);
+  else if(k==='='){const n=evalExpr();s=toRM?String(Math.round(n)):String(Math.round(n*100)/100);if(s==='0')s=''}
+  else if(isOp(k)){if(!s)return;s=isOp(last)?s.slice(0,-1)+k:s+k}
+  else if(k==='.'){if(!cur.includes('.'))s+=cur?'.':'0.'}
+  else{
+    if(cur.includes('.')&&cur.split('.')[1].length>=2)return;
+    if(cur.replace('.','').length>11)return;
+    if(cur==='0')s=s.slice(0,-1);
+    if(k==='000'&&!cur)return;
+    s+=k;
+  }
+  render();
+}
+$('pad').addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(b)press(b.dataset.k)});
+$('chips').addEventListener('click',e=>{const b=e.target.closest('[data-c]');if(!b)return;const c=b.dataset.c;s=s?(isOp(s.slice(-1))?s+c:s+'+'+c):c;render()});
+$('swap').addEventListener('click',()=>{toRM=!toRM;s='';buildPad();render()});
+$('rate').value=rate;$('fee').value=fee;
+const save=()=>{try{localStorage.setItem('krwRate',rate);localStorage.setItem('krwWhen',when);localStorage.setItem('krwFee',fee);localStorage.setItem('krwLock',locked?'1':'0')}catch(err){}};
+const setStatus=t=>{$('status').textContent=t};
+$('rate').addEventListener('input',e=>{const v=parseFloat(e.target.value);if(v>0){rate=v;when='manual';save();setStatus(locked?'🔒 Locked at your rate.':'Using your own rate until next update — tick Lock to keep it.');render()}});
+$('fee').addEventListener('input',e=>{const v=parseFloat(e.target.value);fee=v>=0?v:0;save();render()});
+function lockUI(){$('lock').checked=locked;$('rate').readOnly=false;$('refresh').disabled=locked;$('refresh').style.opacity=locked?.4:1;if(locked)setStatus('🔒 Locked at your rate. Live rate won\'t change it.')}
+$('lock').addEventListener('change',e=>{locked=e.target.checked;save();lockUI();if(!locked)live()});
+async function live(){
+  if(locked){lockUI();return}
+  setStatus('Checking live rate…');
+  const srcs=[
+    ['https://open.er-api.com/v6/latest/MYR',j=>[j.rates.KRW,j.time_last_update_utc]],
+    ['https://api.frankfurter.app/latest?from=MYR&to=KRW',j=>[j.rates.KRW,j.date]]
+  ];
+  for(const [u,pick] of srcs){
+    try{
+      const r=await fetch(u,{cache:'no-store'});if(!r.ok)continue;
+      const [v,d]=pick(await r.json());
+      if(v>0){rate=Math.round(v*100)/100;when=new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});$('rate').value=rate;save();setStatus('Live mid-market rate, updated '+when+'. Wise uses this rate.');render();return}
+    }catch(e){}
+  }
+  setStatus(when&&when!=='manual'?'Offline — using last saved rate from '+when+'.':'Offline — using saved rate. Tap Update when you have data.');
+}
+$('refresh').addEventListener('click',live);
+lockUI();live();
+const KM={'+':'+','-':'−','*':'×','x':'×','/':'÷','.':'.','Enter':'=','=':'=','Backspace':'⌫','Escape':'C'};
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(/^[0-9]$/.test(e.key))press(e.key);else if(KM[e.key]){e.preventDefault();press(KM[e.key])}});
+buildPad();render();
+}
+</script>
+</body>
+</html>
